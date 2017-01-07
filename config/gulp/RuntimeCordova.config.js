@@ -84,4 +84,33 @@ module.exports = function (gulp){
             if(done) done();
         }
     }
-}
+
+    gulp.task('cordova-create', function() {
+        var cordova = require('cordova-lib').cordova.raw;
+        return cordova.create('.cordova', "de.test.Jey", "jey");
+    });
+
+    gulp.task('cordova-add-ios', function() {
+        var cordova = require('cordova-lib').cordova.raw;
+        process.chdir('.cordova');
+        return cordova.platform("add","ios");
+    });
+
+    gulp.task('cordova-add-android', function() {
+        var cordova = require('cordova-lib').cordova.raw;
+        process.chdir('.cordova');
+        return cordova.platform("add","android");
+    });
+
+    gulp.task('cordova-build-ios', function() {
+        var cordova = require('cordova-lib').cordova.raw;
+        process.chdir('.cordova');
+        return cordova.build("ios");
+    });
+
+    gulp.task('cordova-run-ios', function() {
+        var cordova = require('cordova-lib').cordova.raw;
+        process.chdir('.cordova');
+        return cordova.run("ios");
+    });
+};
