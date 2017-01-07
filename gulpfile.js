@@ -1,6 +1,5 @@
 var gulp = require('gulp');
 var clean = require('gulp-clean');
-var replace = require('gulp-replace');
 
 gulp.task('clean', function() {
     return gulp.src('lib/')
