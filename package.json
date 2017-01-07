@@ -1,0 +1,35 @@
+{
+  "name": "@fabalous/runtime-cordova",
+  "version": "0.0.1",
+  "description": "Runtime for Corodova",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postversion": "npm run build && git push && git push --tags && npm publish",
+    "build": "gulp clean && tsc && gulp copy_src_to_lib && gulp remove_src_folder && gulp remove_node_modules_folder",
+    "install": "cp -Rf ./lib/* ./ && rm -r ./lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Faba-network/fabalous-runtime-cordova.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Faba-network/fabalous-runtime-cordova/issues"
+  },
+  "homepage": "https://github.com/Faba-network/fabalous-runtime-cordova#readme",
+  "dependencies": {
+    "cordova": "^6.4.0"
+  },
+  "devDependencies": {
+    "@fabalous/core": "^0.2.45",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-clean": "^0.3.2",
+    "gulp-replace": "^0.5.4",
+    "gulp-util": "^3.0.7",
+    "tslint": "^3.15.1",
+    "typescript": "2.1.4"
+  }
+}

@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "noImplicitAny": false,
+        "declaration": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "sourceMap": true,
+        "outDir": "./lib/",
+        "sourceRoot": "./",
+        "jsx": "react",
+        "module": "es6",
+        "moduleResolution": "node",
+        "lib": ["dom","es6"]
+    },
+
+    "exclude": [
+        "node_modules"
+    ]
+}
