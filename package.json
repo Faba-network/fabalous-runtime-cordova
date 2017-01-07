@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "postversion": "npm run build && git push && git push --tags && npm publish",
     "build": "gulp clean && tsc && gulp copy_src_to_lib && gulp remove_src_folder && gulp remove_node_modules_folder",
-    "install": "cp -Rf ./lib/* ./ && rm -r ./lib && gulp cordova-create && gulp cordova-add-ios && gulp cordova-add-android"
+    "install": "cp -Rf ./lib/* ./ && rm -r ./lib"
   },
   "repository": {
     "type": "git",
