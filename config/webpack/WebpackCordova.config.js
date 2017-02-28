@@ -27,7 +27,7 @@ module.exports = {
 
     entry: {
         app: [
-            path.join(__workDir, './src/A_Web.ts'), // Your appʼs entry point
+            path.join(__workDir, './src/A_Cordova.ts'), // Your appʼs entry point
             'webpack-dev-server/client?http://localhost:8090/', // WebpackDevServer host and port
             'webpack/hot/only-dev-server' // "only" prevents reload on syntax errors
         ]
@@ -53,8 +53,8 @@ module.exports = {
 
     plugins: [
         new webpack.DefinePlugin({
-            'process.env.FABALOUS_CORDOVA': '"true"',
-            'process.env.FABALOUS_DEBUG': '"true"'
+            'process.env.FABALOUS_RUNTIME': JSON.stringify("cordova"),
+            'process.env.FABALOUS_DEBUG': JSON.stringify("1")
         }),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.optimize.CommonsChunkPlugin({

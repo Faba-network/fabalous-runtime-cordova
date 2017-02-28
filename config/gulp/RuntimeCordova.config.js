@@ -10,7 +10,7 @@ module.exports = function (gulp){
     gulp.task('runtime-cordova-watch', function() {
         new WebpackDevServer(webpack(developConfig), {
             publicPath: '/',
-            contentBase: path.join(__workDir, './crodova/platforms/browser/www/'),
+            contentBase: path.join(__workDir, './.cordova/platforms/browser/www/'),
             hot: true,
             stats: {
                 colors: true,
@@ -20,7 +20,7 @@ module.exports = function (gulp){
                 version:true,
                 errors:true
             }
-        }).listen(8080, 'localhost', function(err) {
+        }).listen(8090, 'localhost', function(err) {
             if (err) console.error(err);
         });
     });
@@ -38,9 +38,9 @@ module.exports = function (gulp){
 
         myConfig.plugins = [
             new webpack.DefinePlugin({
-                'process.env.NODE_ENV': '"production"',
-                'process.env.FABALOUS_CORDOVA': '"true"',
-                'process.env.FABALOUS_DEBUG': '"true"'
+                'process.env.NODE_ENV':  JSON.stringify("production"),
+                'process.env.FABALOUS_RUNTIME': JSON.stringify("web"),
+                'process.env.FABALOUS_DEBUG': JSON.stringify("1")
             }),
 
             new webpack.optimize.CommonsChunkPlugin({
