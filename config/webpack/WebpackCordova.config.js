@@ -1,11 +1,119 @@
 var path = require('path');
 var webpack = require('webpack');
-var ProgressBarPlugin = require('progress-bar-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 new webpack.ExtendedAPIPlugin();
 
-function root(p) {
-    return path.join(__workDir, p);
+function getGitHash(){
+    try {
+        return __gitHash;
+    } catch (e){
+        return "";
+    }
+}
+
+function getMaxFileSize(){
+    try {
+        return __maxAssetSize;
+    } catch (e){
+        return 1000;
+    }
+}
+
+function getDevTool(){
+    try {
+        return __devTool;
+    } catch(e){
+        return 'source-map';
+    }
+}
+
+function getHost(){
+    try {
+        return __host;
+    } catch (e){
+        return 'localhost'
+    }
+}
+
+function getPort(){
+    try{
+        return __port;
+    } catch (e){
+        return '8080';
+    }
+}
+
+function getAlias(){
+    try {
+        return __alias;
+    } catch (e){
+        return {};
+    }
+}
+
+//path.join(__workDir, './src/common/web/index.ejs')
+function getIndexFile(){
+    var ph = path.join(__workDir, './src/common/web/index.ejs');
+    var fs = require('fs');
+    if (fs.existsSync(ph)) {
+        return ph;
+    } else {
+        return './node_modules/@fabalous/runtime-web/config/webpack/index.ejs';
+    }
+}
+
+function getDebugMode(){
+    try {
+        return __debugMode;
+    } catch (e){
+        return 0;
+    }
+}
+
+function getRules(){
+    const rules = [
+        {
+            test: /\.tsx?$/,
+            exclude: /node_modules/,
+            use: [
+                {
+                    loader:"react-hot-loader/webpack"
+                },
+                {
+                    loader: 'ts-loader',
+                    query: {
+                        transpileOnly: true,
+                        configFile:path.join(__workDir, getCache())
+                    }
+                }
+            ]
+        },
+        {
+            test: /\.(eot|woff|woff2|ttf|png|jpg|mp4|mp3)$/,
+            loader: `url-loader?limit=${getMaxFileSize()}&name=assets/[name]_${getGitHash()}.[ext]`,
+            exclude: /node_modules/
+        },
+        {
+            test: /\.svg$/,
+            loader: 'svg-inline-loader'
+        }
+    ];
+
+    try{
+        if (__rules) return rules.concat(__rules);
+    } catch (e){
+        return rules;
+    }
+}
+
+function getCache(){
+    try {
+        if (__cache == false){
+            return './node_modules/@fabalous/runtime-web/config/tsconfig.nocache.web.json'
+        }
+    } catch (e){
+        return './node_modules/@fabalous/runtime-web/config/tsconfig.web.json';
+    }
 }
 
 module.exports = {
@@ -13,61 +121,39 @@ module.exports = {
         path: path.join(__workDir, './crodova/platforms/browser/www/'),
         chunkFilename: 'bundle-[chunkhash].js'
     },
-
-    cache: true,
     performance: { hints: false },
-
-    // TODO: eval on fast develop
-    // devtool: __devTool | 'source-map',
-    devtool: 'source-map',
-
+    devtool: getDevTool(),
+    mode:"development",
     resolve: {
-        extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js', '.less'],
+        extensions: ['.ts', '.tsx', '.js'],
+        alias: getAlias()
     },
 
     entry: {
         app: [
-            path.join(__workDir, './src/A_Cordova.ts'), // Your appʼs entry point
-            'webpack-dev-server/client?http://localhost:8090/', // WebpackDevServer host and port
+            "react-hot-loader/patch",
+            path.join(__workDir, './src/A_Web.ts'), // Your appʼs entry point
+            'webpack-dev-server/client?http://'+getHost()+':'+getPort()+'/', // WebpackDevServer host and port
             'webpack/hot/only-dev-server' // "only" prevents reload on syntax errors
         ]
     },
     module: {
-        loaders: [
-            {
-                test: /\.tsx?$/,
-                include: [
-                    path.join(__workDir, './src/')
-                ],
-                loader: 'awesome-typescript-loader'
-            },
-            {
-                test: /\.(eot|woff|woff2|ttf|svg|png|jpg)$/,
-                loader: 'url-loader?limit=10000&name=assets/[name]-[hash].[ext]',
-                include: [
-                    path.join(__workDir, './src/')
-                ]
-            }
-        ]
+        rules: getRules()
     },
 
     plugins: [
         new webpack.DefinePlugin({
+            'process.env.NODE_ENV':  JSON.stringify("development"),
             'process.env.FABALOUS_RUNTIME': JSON.stringify("cordova"),
-            'process.env.FABALOUS_DEBUG': JSON.stringify("1")
+            'process.env.FABALOUS_DEBUG': JSON.stringify(1),
+            'process.env.API_URL': JSON.stringify(process.env.API_URL),
+            'process.env.GOOGLE_ANALYTICS': JSON.stringify(process.env.GOOGLE_ANALYTICS)
         }),
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'app',
-            minChunks: Infinity,
-            minChunkSize: 50000,
-            filename: 'app.js'
-        }),
-        new ProgressBarPlugin(),
         new HtmlWebpackPlugin({
             hash:true,
-            template: path.join(__workDir, './src/common/web/index.ejs')
+            template: getIndexFile(),
+            chunksSortMode:"none"
         }),
-        new webpack.NamedModulesPlugin()
+        new webpack.HotModuleReplacementPlugin()
     ]
 };

@@ -39,36 +39,21 @@ module.exports = function (gulp){
         myConfig.plugins = [
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV':  JSON.stringify("production"),
-                'process.env.FABALOUS_RUNTIME': JSON.stringify("web"),
-                'process.env.FABALOUS_DEBUG': JSON.stringify("1")
+                'process.env.FABALOUS_RUNTIME': JSON.stringify("cordova"),
+                'process.env.FABALOUS_DEBUG': JSON.stringify(1),
+                'process.env.API_URL': JSON.stringify(process.env.API_URL),
+                'process.env.GOOGLE_ANALYTICS': JSON.stringify(process.env.GOOGLE_ANALYTICS)
             }),
-
-            new webpack.optimize.CommonsChunkPlugin({
-                name: 'app',
-                minChunks: Infinity,
-                minChunkSize: 50000,
-                filename: 'app.js'
-            }),
-
-            new webpack.optimize.UglifyJsPlugin({
-                compress: {
-                    warnings: false
-                },
-                output: {
-                    comments: false
-                },
-                sourceMap: false
-            }),
+            new webpack.optimize.ModuleConcatenationPlugin(),
 
             new HtmlWebpackPlugin({
                 hash:true,
-                template: path.join(__workDir, './src/common/web/index.ejs')
+                template: getIndexFile(),
+                chunksSortMode:"none"
             }),
 
-            new webpack.NoErrorsPlugin(),
             new CompressionPlugin(),
             new webpack.ExtendedAPIPlugin()
-
         ];
 
         webpack(myConfig).run(onBuild(done));
